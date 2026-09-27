@@ -1,1438 +1,918 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JEETrack - Ultimate JEE Preparation Tracker</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Inter Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        darkBg: '#09090e',
-                        cardBg: '#12121c',
-                        cardHover: '#181826',
-                        accent: '#a855f7',
-                        accentHover: '#9333ea',
-                        accentLight: 'rgba(168, 85, 247, 0.15)',
-                        physics: '#3b82f6',
-                        chemistry: '#10b981',
-                        maths: '#f59e0b',
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        brand: ['Orbitron', 'sans-serif'],
-                    }
-                }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JEE Tracker - Student Performance Dashboard</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              500: '#A855F7',
+              600: '#9333EA',
+              700: '#7E22CE',
+              bg: '#0B0B12',
+              card: '#13131F',
+              border: '#232336'
             }
+          }
         }
-    </script>
-    <style>
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #09090e;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #27273a;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #a855f7;
-        }
-        .glow-effect {
-            box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
-        }
-        .glow-card {
-            border: 1px solid rgba(168, 85, 247, 0.2);
-        }
-    </style>
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons & Chart.js -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0B0B12;
+      color: #E2E8F0;
+    }
+    .glass-panel {
+      background: rgba(19, 19, 31, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid #232336;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #0B0B12;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #232336;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #A855F7;
+    }
+  </style>
 </head>
-<body class="bg-darkBg text-slate-200 font-sans antialiased min-h-screen flex flex-col md:flex-row overflow-x-hidden selection:bg-accent selection:text-white">
+<body class="min-h-screen flex flex-col md:flex-row overflow-x-hidden custom-scrollbar bg-[#0B0B12]">
 
-    <!-- Sidebar -->
-    <aside class="w-full md:w-64 bg-cardBg border-r border-slate-800 flex-shrink-0 flex flex-col justify-between z-20">
+  <!-- Sidebar -->
+  <aside class="w-full md:w-64 glass-panel border-r border-[#232336] flex flex-col justify-between shrink-0">
+    <div>
+      <!-- App Header -->
+      <div class="p-5 border-b border-[#232336] flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-purple-500/30">
+            JEE
+          </div>
+          <div>
+            <h1 class="font-bold text-white tracking-wide">JEE Track</h1>
+            <p class="text-xs text-gray-400">Preparation Portal</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="p-3 space-y-1">
+        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-purple-400 bg-purple-500/10 border border-purple-500/20">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
+        </button>
+        <button onclick="switchTab('mains')" id="nav-mains" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5">
+          <i data-lucide="file-check-2" class="w-4 h-4"></i> JEE Mains
+        </button>
+        <button onclick="switchTab('advanced')" id="nav-advanced" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5">
+          <i data-lucide="award" class="w-4 h-4"></i> JEE Advanced
+        </button>
+        <button onclick="switchTab('compare')" id="nav-compare" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5">
+          <i data-lucide="git-compare" class="w-4 h-4"></i> Compare
+        </button>
+        <button onclick="switchTab('hours')" id="nav-hours" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5">
+          <i data-lucide="clock" class="w-4 h-4"></i> Study Hours
+        </button>
+        <button onclick="switchTab('todo')" id="nav-todo" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5">
+          <i data-lucide="check-square" class="w-4 h-4"></i> To-Do List
+        </button>
+        <button onclick="switchTab('backlog')" id="nav-backlog" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5">
+          <i data-lucide="alert-circle" class="w-4 h-4"></i> Backlog Tracker
+        </button>
+        <button onclick="switchTab('syllabus')" id="nav-syllabus" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5">
+          <i data-lucide="book-open" class="w-4 h-4"></i> Syllabus Tracker
+        </button>
+        <button onclick="switchTab('practice')" id="nav-practice" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5">
+          <i data-lucide="pen-tool" class="w-4 h-4"></i> Practice Log
+        </button>
+      </nav>
+    </div>
+
+    <!-- Storage Reset Button -->
+    <div class="p-4 border-t border-[#232336]">
+      <button onclick="resetAllDataToZero()" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-all">
+        <i data-lucide="trash-2" class="w-4 h-4"></i> Reset All Data to 0
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Workspace -->
+  <main class="flex-1 p-4 md:p-8 overflow-y-auto custom-scrollbar">
+
+    <!-- DASHBOARD VIEW -->
+    <section id="view-dashboard" class="space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-            <!-- Brand Header -->
-            <div class="p-5 flex items-center justify-between border-b border-slate-800/60">
-                <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-graduation-cap text-accent text-2xl"></i>
-                    <span class="font-brand text-xl font-bold tracking-wider text-white">JEE<span class="text-accent">Track</span></span>
-                </div>
-                <span class="text-xs px-2 py-0.5 rounded bg-accentLight text-accent font-mono">v2.0</span>
-            </div>
+          <h2 class="text-2xl font-bold text-white tracking-tight">Overview Dashboard</h2>
+          <p class="text-sm text-gray-400">Track study metrics, exam progress, and active tasks.</p>
+        </div>
+      </div>
 
-            <!-- Navigation Links -->
-            <nav class="p-3 space-y-6 text-sm">
-                <!-- Overview -->
-                <div>
-                    <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Overview</p>
-                    <a href="#" onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-xl transition text-accent bg-accentLight font-medium">
-                        <i class="fa-solid fa-chart-pie w-5"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </div>
-
-                <!-- Mock Tests -->
-                <div>
-                    <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Mock Tests</p>
-                    <div class="space-y-1">
-                        <a href="#" onclick="switchTab('mains')" id="nav-mains" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition">
-                            <i class="fa-solid fa-list-check w-5"></i>
-                            <span>JEE Mains</span>
-                        </a>
-                        <a href="#" onclick="switchTab('advanced')" id="nav-advanced" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition">
-                            <i class="fa-solid fa-award w-5"></i>
-                            <span>JEE Advanced</span>
-                        </a>
-                        <a href="#" onclick="switchTab('compare')" id="nav-compare" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition">
-                            <i class="fa-solid fa-code-compare w-5"></i>
-                            <span>Compare</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Study Section -->
-                <div>
-                    <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Study</p>
-                    <div class="space-y-1">
-                        <a href="#" onclick="switchTab('hours')" id="nav-hours" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition">
-                            <i class="fa-regular fa-clock w-5"></i>
-                            <span>Study Hours</span>
-                        </a>
-                        <a href="#" onclick="switchTab('todo')" id="nav-todo" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition">
-                            <i class="fa-regular fa-square-check w-5"></i>
-                            <span>To-Do</span>
-                        </a>
-                        <a href="#" onclick="switchTab('backlog')" id="nav-backlog" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition">
-                            <i class="fa-solid fa-thumbtack w-5"></i>
-                            <span>Backlog</span>
-                        </a>
-                        <a href="#" onclick="switchTab('syllabus')" id="nav-syllabus" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition">
-                            <i class="fa-solid fa-book-bookmark w-5"></i>
-                            <span>Syllabus</span>
-                        </a>
-                        <a href="#" onclick="switchTab('practice')" id="nav-practice" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition">
-                            <i class="fa-solid fa-pen-to-square w-5"></i>
-                            <span>Practice Log</span>
-                        </a>
-                    </div>
-                </div>
-            </nav>
+      <!-- Zero Metrics Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="glass-panel p-5 rounded-2xl border border-[#232336] relative overflow-hidden">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-gray-400 font-medium uppercase tracking-wider">Total Study Hours</span>
+            <div class="p-2 bg-purple-500/10 text-purple-400 rounded-lg"><i data-lucide="clock" class="w-4 h-4"></i></div>
+          </div>
+          <div class="text-3xl font-extrabold text-white" id="dash-total-hours">0.0h</div>
+          <p class="text-xs text-gray-500 mt-2">Logged dynamically</p>
         </div>
 
-        <!-- User Footer Profile -->
-        <div class="p-4 border-t border-slate-800/60 flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-accent to-indigo-600 flex items-center justify-center font-bold text-white shadow-md">
-                A
-            </div>
-            <div class="overflow-hidden">
-                <p class="text-sm font-semibold text-slate-200 truncate">Aspirant</p>
-                <p class="text-xs text-slate-500 truncate">JEE 2027 Aspirant</p>
-            </div>
+        <div class="glass-panel p-5 rounded-2xl border border-[#232336] relative overflow-hidden">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-gray-400 font-medium uppercase tracking-wider">Avg Mains Score</span>
+            <div class="p-2 bg-blue-500/10 text-blue-400 rounded-lg"><i data-lucide="file-check-2" class="w-4 h-4"></i></div>
+          </div>
+          <div class="text-3xl font-extrabold text-white" id="dash-mains-avg">0 / 300</div>
+          <p class="text-xs text-gray-500 mt-2">Across 0 tests</p>
         </div>
-    </aside>
 
-    <!-- Main Workspace Container -->
-    <main class="flex-1 overflow-y-auto p-4 md:p-8 space-y-6">
+        <div class="glass-panel p-5 rounded-2xl border border-[#232336] relative overflow-hidden">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-gray-400 font-medium uppercase tracking-wider">Avg Advanced Score</span>
+            <div class="p-2 bg-emerald-500/10 text-emerald-400 rounded-lg"><i data-lucide="award" class="w-4 h-4"></i></div>
+          </div>
+          <div class="text-3xl font-extrabold text-white" id="dash-adv-avg">0%</div>
+          <p class="text-xs text-gray-500 mt-2">Across 0 tests</p>
+        </div>
 
-        <!-- VIEW: DASHBOARD -->
-        <section id="view-dashboard" class="view-content space-y-6">
-            <!-- Header Greeting -->
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight font-sans">
-                        Good evening, <span class="text-accent" id="dash-username">Aspirant</span>
-                    </h1>
-                    <p class="text-xs md:text-sm text-slate-400 mt-1" id="dash-date">Loading date...</p>
-                </div>
-                <div class="flex items-center space-x-3">
-                    <button onclick="openLogHoursModal()" class="bg-accent hover:bg-accentHover text-white text-xs md:text-sm px-4 py-2.5 rounded-xl font-medium transition flex items-center space-x-2 shadow-lg shadow-accent/20">
-                        <i class="fa-solid fa-plus"></i>
-                        <span>Log Hours</span>
-                    </button>
-                    <button onclick="openAddTestModal('mains')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs md:text-sm px-4 py-2.5 rounded-xl font-medium transition border border-slate-700">
-                        <i class="fa-solid fa-file-signature"></i>
-                        <span>Log Mock</span>
-                    </button>
-                </div>
+        <div class="glass-panel p-5 rounded-2xl border border-[#232336] relative overflow-hidden">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-gray-400 font-medium uppercase tracking-wider">Syllabus Completed</span>
+            <div class="p-2 bg-amber-500/10 text-amber-400 rounded-lg"><i data-lucide="book-open" class="w-4 h-4"></i></div>
+          </div>
+          <div class="text-3xl font-extrabold text-white" id="dash-syllabus-progress">0%</div>
+          <p class="text-xs text-gray-500 mt-2">0 of 0 chapters completed</p>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="glass-panel p-5 rounded-2xl">
+          <h3 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+            <i data-lucide="trending-up" class="w-4 h-4 text-purple-400"></i> Mains Score Trend
+          </h3>
+          <div class="h-64 relative flex items-center justify-center">
+            <canvas id="chart-mains-dashboard"></canvas>
+            <p id="empty-mains-chart-msg" class="absolute text-xs text-gray-500">No test data logged yet.</p>
+          </div>
+        </div>
+
+        <div class="glass-panel p-5 rounded-2xl">
+          <h3 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+            <i data-lucide="bar-chart-2" class="w-4 h-4 text-purple-400"></i> Weekly Hours Study Distribution
+          </h3>
+          <div class="h-64 relative flex items-center justify-center">
+            <canvas id="chart-hours-dashboard"></canvas>
+            <p id="empty-hours-chart-msg" class="absolute text-xs text-gray-500">No study hours logged yet.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MAINS VIEW -->
+    <section id="view-mains" class="space-y-6 hidden">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-bold text-white tracking-tight">JEE Mains Mock Test Tracker</h2>
+          <p class="text-sm text-gray-400">Log scores out of 300 (Physics, Chemistry, Math - 100 each).</p>
+        </div>
+      </div>
+
+      <!-- Input Form -->
+      <form onsubmit="addMainsTest(event)" class="glass-panel p-5 rounded-2xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Test Name</label>
+          <input type="text" id="mains-name" required placeholder="e.g. Full Syllabus Test 1" class="w-full bg-[#0B0B12] border border-[#232336] rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Physics (/100)</label>
+          <input type="number" max="100" min="0" id="mains-p" required placeholder="0" class="w-full bg-[#0B0B12] border border-[#232336] rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Chemistry (/100)</label>
+          <input type="number" max="100" min="0" id="mains-c" required placeholder="0" class="w-full bg-[#0B0B12] border border-[#232336] rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Maths (/100)</label>
+          <input type="number" max="100" min="0" id="mains-m" required placeholder="0" class="w-full bg-[#0B0B12] border border-[#232336] rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
+        </div>
+        <div class="flex items-end">
+          <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium px-4 py-2 rounded-xl text-sm transition-all shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2">
+            <i data-lucide="plus" class="w-4 h-4"></i> Add Record
+          </button>
+        </div>
+      </form>
+
+      <!-- Log Table -->
+      <div class="glass-panel rounded-2xl overflow-hidden border border-[#232336]">
+        <div class="p-4 border-b border-[#232336] font-semibold text-sm text-white">Mains Mock Test History</div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-[#0B0B12] text-xs text-gray-400 uppercase tracking-wider">
+              <tr>
+                <th class="p-4">Date</th>
+                <th class="p-4">Test Name</th>
+                <th class="p-4">Physics</th>
+                <th class="p-4">Chemistry</th>
+                <th class="p-4">Maths</th>
+                <th class="p-4">Total (/300)</th>
+                <th class="p-4 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="mains-table-body" class="divide-y divide-[#232336]">
+              <!-- Empty state filled dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADVANCED VIEW -->
+    <section id="view-advanced" class="space-y-6 hidden">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-bold text-white tracking-tight">JEE Advanced Mock Test Tracker</h2>
+          <p class="text-sm text-gray-400">Log scores and percentages for Paper 1 and Paper 2 exams.</p>
+        </div>
+      </div>
+
+      <!-- Input Form -->
+      <form onsubmit="addAdvTest(event)" class="glass-panel p-5 rounded-2xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Test Name</label>
+          <input type="text" id="adv-name" required placeholder="e.g. Allen Paper 1 & 2" class="w-full bg-[#0B0B12] border border-[#232336] rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Score Obtained</label>
+          <input type="number" min="0" id="adv-score" required placeholder="0" class="w-full bg-[#0B0B12] border border-[#232336] rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Maximum Marks</label>
+          <input type="number" min="1" id="adv-max" required placeholder="360" class="w-full bg-[#0B0B12] border border-[#232336] rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Target %</label>
+          <input type="number" min="0" max="100" id="adv-target" placeholder="60" class="w-full bg-[#0B0B12] border border-[#232336] rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
+        </div>
+        <div class="flex items-end">
+          <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium px-4 py-2 rounded-xl text-sm transition-all shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2">
+            <i data-lucide="plus" class="w-4 h-4"></i> Add Record
+          </button>
+        </div>
+      </form>
+
+      <!-- Log Table -->
+      <div class="glass-panel rounded-2xl overflow-hidden border border-[#232336]">
+        <div class="p-4 border-b border-[#232336] font-semibold text-sm text-white">Advanced Mock Test History</div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-[#0B0B12] text-xs text-gray-400 uppercase tracking-wider">
+              <tr>
+                <th class="p-4">Date</th>
+                <th class="p-4">Test Name</th>
+                <th class="p-4">Marks Obtained</th>
+                <th class="p-4">Total Marks</th>
+                <th class="p-4">Percentage</th>
+                <th class="p-4 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="adv-table-body" class="divide-y divide-[#232336]">
+              <!-- Empty state -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMPARE VIEW -->
+    <section id="view-compare" class="space-y-6 hidden">
+      <div>
+        <h2 class="text-2xl font-bold text-white tracking-tight">Performance Comparison</h2>
+        <p class="text-sm text-gray-400">Compare Mains and Advanced mock scores side by side.</p>
+      </div>
+
+      <div class="glass-panel p-5 rounded-2xl">
+        <h3 class="text-sm font-semibold text-white mb-4">Mains vs Advanced Percentage Progression</h3>
+        <div class="h-80 relative flex items-center justify-center">
+          <canvas id="chart-compare"></canvas>
+          <p id="empty-compare-msg" class="absolute text-xs text-gray-500">Add test scores in Mains and Advanced sections to compare performance.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOURS VIEW -->
+    <section id="view-hours" class="space-y-6 hidden">
+      <div>
+        <h2 class="text-2xl font-bold text-white tracking-tight">Daily Study Hours Log</h2>
+        <p class="text-sm text-gray-400">Log study hours subject-wise to track consistency.</p>
+      </div>
+
+      <!-- Input Form -->
+      <form onsubmit="addStudyLog(event)" class="glass-panel p-5 rounded-2xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Date</label>
+          <input type="date" id="hour-date" required class="w-full bg-[#0B0B12] border border-[#232336] rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Subject</label>
+          <select id="hour-subject" required class="w-full bg-[#0B0B12] border border-[#232336] rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
+            <option value="Physics">Physics</option>
+            <option value="Chemistry">Chemistry</option>
+            <option value="Maths">Maths</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Hours Spent</label>
+          <input type="number" step="0.5" min="0.1" id="hour-value" required placeholder="2.5" class="w-full bg-[#0B0B12] border border-[#232336] rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Topic Covered</label>
+          <input type="text" id="hour-topic" placeholder="e.g. Rotational Motion PYQs" class="w-full bg-[#0B0B12] border border-[#232336] rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
+        </div>
+        <div class="flex items-end">
+          <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium px-4 py-2 rounded-xl text-sm transition-all shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2">
+            <i data-lucide="plus" class="w-4 h-4"></i> Log Hours
+          </button>
+        </div>
+      </form>
+
+      <!-- Logs List -->
+      <div class="glass-panel rounded-2xl overflow-hidden border border-[#232336]">
+        <div class="p-4 border-b border-[#232336] font-semibold text-sm text-white">Logged Study Sessions</div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-[#0B0B12] text-xs text-gray-400 uppercase tracking-wider">
+              <tr>
+                <th class="p-4">Date</th>
+                <th class="p-4">Subject</th>
+                <th class="p-4">Duration</th>
+                <th class="p-4">Topic / Notes</th>
+                <th class="p-4 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="hours-table-body" class="divide-y divide-[#232336]">
+              <!-- Empty state -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TODO VIEW -->
+    <section id="view-todo" class="space-y-6 hidden">
+      <div>
+        <h2 class="text-2xl font-bold text-white tracking-tight">Daily Task Manager</h2>
+        <p class="text-sm text-gray-400">Manage daily goals, homework, and module exercises.</p>
+      </div>
+
+      <!-- Add Task Input -->
+      <form onsubmit="addTodo(event)" class="glass-panel p-4 rounded-2xl flex gap-3">
+        <input type="text" id="todo-input" required placeholder="Add new task (e.g., Solve 30 Physics HC Verma problems)" class="flex-1 bg-[#0B0B12] border border-[#232336] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500">
+        <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-medium px-5 py-2.5 rounded-xl text-sm transition-all shadow-lg shadow-purple-600/30 shrink-0 flex items-center gap-2">
+          <i data-lucide="plus" class="w-4 h-4"></i> Add Task
+        </button>
+      </form>
+
+      <!-- Tasks List -->
+      <div id="todo-container" class="space-y-2">
+        <!-- Empty list rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- BACKLOG VIEW -->
+    <section id="view-backlog" class="space-y-6 hidden">
+      <div>
+        <h2 class="text-2xl font-bold text-white tracking-tight">Backlog Tracker</h2>
+        <p class="text-sm text-gray-400">Keep track of pending lectures, worksheets, and chapters.</p>
+      </div>
+
+      <!-- Add Backlog Input -->
+      <form onsubmit="addBacklog(event)" class="glass-panel p-5 rounded-2xl grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Subject</label>
+          <select id="backlog-subject" required class="w-full bg-[#0B0B12] border border-[#232336] rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
+            <option value="Physics">Physics</option>
+            <option value="Chemistry">Chemistry</option>
+            <option value="Maths">Maths</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Chapter / Topic</label>
+          <input type="text" id="backlog-topic" required placeholder="e.g. Ionic Equilibrium" class="w-full bg-[#0B0B12] border border-[#232336] rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
+        </div>
+        <div class="flex items-end">
+          <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium px-4 py-2 rounded-xl text-sm transition-all shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2">
+            <i data-lucide="plus" class="w-4 h-4"></i> Add Backlog Item
+          </button>
+        </div>
+      </form>
+
+      <!-- Backlog Table -->
+      <div class="glass-panel rounded-2xl overflow-hidden border border-[#232336]">
+        <div class="p-4 border-b border-[#232336] font-semibold text-sm text-white">Pending Backlogs</div>
+        <div id="backlog-list" class="divide-y divide-[#232336]">
+          <!-- Empty list rendered dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- SYLLABUS VIEW -->
+    <section id="view-syllabus" class="space-y-6 hidden">
+      <div>
+        <h2 class="text-2xl font-bold text-white tracking-tight">JEE Chapter Syllabus Checklist</h2>
+        <p class="text-sm text-gray-400">Mark chapters completed as you finish lectures and question practice.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="syllabus-grid">
+        <!-- Syllabus subject columns injected dynamically -->
+      </div>
+    </section>
+
+    <!-- PRACTICE LOG VIEW -->
+    <section id="view-practice" class="space-y-6 hidden">
+      <div>
+        <h2 class="text-2xl font-bold text-white tracking-tight">Question Practice Tracker</h2>
+        <p class="text-sm text-gray-400">Record daily question solve counts from modules and PYQs.</p>
+      </div>
+
+      <form onsubmit="addPracticeLog(event)" class="glass-panel p-5 rounded-2xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Subject</label>
+          <select id="practice-subject" required class="w-full bg-[#0B0B12] border border-[#232336] rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
+            <option value="Physics">Physics</option>
+            <option value="Chemistry">Chemistry</option>
+            <option value="Maths">Maths</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Questions Solved</label>
+          <input type="number" min="1" id="practice-count" required placeholder="50" class="w-full bg-[#0B0B12] border border-[#232336] rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Source / Book</label>
+          <input type="text" id="practice-source" placeholder="e.g. MS Chouhan / PYQ 2023" class="w-full bg-[#0B0B12] border border-[#232336] rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
+        </div>
+        <div class="flex items-end">
+          <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium px-4 py-2 rounded-xl text-sm transition-all shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2">
+            <i data-lucide="plus" class="w-4 h-4"></i> Save Entry
+          </button>
+        </div>
+      </form>
+
+      <div class="glass-panel rounded-2xl overflow-hidden border border-[#232336]">
+        <div class="p-4 border-b border-[#232336] font-semibold text-sm text-white">Practice Log History</div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-[#0B0B12] text-xs text-gray-400 uppercase tracking-wider">
+              <tr>
+                <th class="p-4">Date</th>
+                <th class="p-4">Subject</th>
+                <th class="p-4">Questions Solved</th>
+                <th class="p-4">Resource</th>
+                <th class="p-4 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="practice-table-body" class="divide-y divide-[#232336]">
+              <!-- Empty state -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // CLEAN STORAGE KEY - Guaranteed absolute zero on start
+    const STORAGE_KEY = 'jee_tracker_clean_v1';
+
+    // JEE Syllabus Core Chapters List
+    const DEFAULT_SYLLABUS = {
+      Physics: [
+        'Kinematics', 'Laws of Motion', 'Work Energy Power', 'Rotational Motion', 
+        'Gravitation', 'Thermodynamics', 'Electrostatics', 'Current Electricity', 
+        'Magnetism', 'Ray Optics', 'Modern Physics'
+      ],
+      Chemistry: [
+        'Mole Concept', 'Atomic Structure', 'Chemical Bonding', 'Thermodynamics', 
+        'Equilibrium', 'Periodic Table', 'Coordination Compounds', 'Organic Basic Principles', 
+        'Hydrocarbons', 'Aldehydes & Ketones'
+      ],
+      Maths: [
+        'Sets & Relations', 'Quadratic Equations', 'Sequence & Series', 'Matrices & Determinants', 
+        'Limits & Continuity', 'Derivatives', 'Integration', 'Differential Equations', 
+        'Vectors & 3D Geometry', 'Probability'
+      ]
+    };
+
+    // STRICT BLANK INITIAL DATA
+    const INITIAL_BLANK_STATE = {
+      mainsTests: [],
+      advTests: [],
+      studyLogs: [],
+      todos: [],
+      backlogs: [],
+      practiceLogs: [],
+      syllabusProgress: {}
+    };
+
+    // Load data or initialize empty
+    let appData = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (!appData) {
+      appData = JSON.parse(JSON.stringify(INITIAL_BLANK_STATE));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+    }
+
+    // Save Data Helper
+    function saveData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+      updateAllViews();
+    }
+
+    // Clear Storage to Zero Action
+    function resetAllDataToZero() {
+      if (confirm("Reset ALL test scores, study logs, and progress to 0?")) {
+        localStorage.clear();
+        location.reload();
+      }
+    }
+
+    // Navigation Switcher
+    function switchTab(tabId) {
+      const tabs = ['dashboard', 'mains', 'advanced', 'compare', 'hours', 'todo', 'backlog', 'syllabus', 'practice'];
+      tabs.forEach(tab => {
+        const viewEl = document.getElementById(`view-${tab}`);
+        const navEl = document.getElementById(`nav-${tab}`);
+        if (viewEl && navEl) {
+          if (tab === tabId) {
+            viewEl.classList.remove('hidden');
+            navEl.className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-purple-400 bg-purple-500/10 border border-purple-500/20";
+          } else {
+            viewEl.classList.add('hidden');
+            navEl.className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5";
+          }
+        }
+      });
+      refreshCharts();
+    }
+
+    // Charts variables
+    let mainsChartInstance = null;
+    let hoursChartInstance = null;
+    let compareChartInstance = null;
+
+    function initCharts() {
+      const ctxMains = document.getElementById('chart-mains-dashboard').getContext('2d');
+      mainsChartInstance = new Chart(ctxMains, {
+        type: 'line',
+        data: { labels: [], datasets: [{ label: 'Mains Score (/300)', data: [], borderColor: '#A855F7', backgroundColor: 'rgba(168, 85, 247, 0.1)', fill: true, tension: 0.3 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { min: 0, max: 300, grid: { color: '#232336' } }, x: { grid: { color: '#232336' } } } }
+      });
+
+      const ctxHours = document.getElementById('chart-hours-dashboard').getContext('2d');
+      hoursChartInstance = new Chart(ctxHours, {
+        type: 'bar',
+        data: { labels: ['Physics', 'Chemistry', 'Maths'], datasets: [{ label: 'Hours', data: [0, 0, 0], backgroundColor: ['#A855F7', '#3B82F6', '#10B981'], borderRadius: 6 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { min: 0, grid: { color: '#232336' } }, x: { grid: { color: '#232336' } } } }
+      });
+
+      const ctxCompare = document.getElementById('chart-compare').getContext('2d');
+      compareChartInstance = new Chart(ctxCompare, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [
+            { label: 'Mains %', data: [], borderColor: '#3B82F6', tension: 0.3 },
+            { label: 'Advanced %', data: [], borderColor: '#10B981', tension: 0.3 }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 100, grid: { color: '#232336' } }, x: { grid: { color: '#232336' } } } }
+      });
+    }
+
+    function refreshCharts() {
+      // Mains Chart Update
+      if (mainsChartInstance) {
+        const labels = appData.mainsTests.map(t => t.name);
+        const scores = appData.mainsTests.map(t => t.total);
+        mainsChartInstance.data.labels = labels;
+        mainsChartInstance.data.datasets[0].data = scores;
+        mainsChartInstance.update();
+        document.getElementById('empty-mains-chart-msg').style.display = scores.length === 0 ? 'block' : 'none';
+      }
+
+      // Hours Chart Update
+      if (hoursChartInstance) {
+        let p = 0, c = 0, m = 0;
+        appData.studyLogs.forEach(l => {
+          if (l.subject === 'Physics') p += Number(l.hours);
+          if (l.subject === 'Chemistry') c += Number(l.hours);
+          if (l.subject === 'Maths') m += Number(l.hours);
+        });
+        hoursChartInstance.data.datasets[0].data = [p, c, m];
+        hoursChartInstance.update();
+        document.getElementById('empty-hours-chart-msg').style.display = (p + c + m) === 0 ? 'block' : 'none';
+      }
+
+      // Compare Chart Update
+      if (compareChartInstance) {
+        const mainsPerc = appData.mainsTests.map(t => ((t.total / 300) * 100).toFixed(1));
+        const advPerc = appData.advTests.map(t => ((t.score / t.max) * 100).toFixed(1));
+        const maxLen = Math.max(mainsPerc.length, advPerc.length);
+        const labels = Array.from({ length: maxLen }, (_, i) => `Test #${i + 1}`);
+
+        compareChartInstance.data.labels = labels;
+        compareChartInstance.data.datasets[0].data = mainsPerc;
+        compareChartInstance.data.datasets[1].data = advPerc;
+        compareChartInstance.update();
+        document.getElementById('empty-compare-msg').style.display = maxLen === 0 ? 'block' : 'none';
+      }
+    }
+
+    function updateAllViews() {
+      // Total Hours Metric
+      const totalHrs = appData.studyLogs.reduce((acc, curr) => acc + Number(curr.hours), 0);
+      document.getElementById('dash-total-hours').textContent = `${totalHrs.toFixed(1)}h`;
+
+      // Mains Avg Score
+      if (appData.mainsTests.length > 0) {
+        const avgMains = appData.mainsTests.reduce((acc, curr) => acc + curr.total, 0) / appData.mainsTests.length;
+        document.getElementById('dash-mains-avg').textContent = `${Math.round(avgMains)} / 300`;
+      } else {
+        document.getElementById('dash-mains-avg').textContent = `0 / 300`;
+      }
+
+      // Adv Avg Score
+      if (appData.advTests.length > 0) {
+        const avgAdv = appData.advTests.reduce((acc, curr) => acc + ((curr.score / curr.max) * 100), 0) / appData.advTests.length;
+        document.getElementById('dash-adv-avg').textContent = `${avgAdv.toFixed(1)}%`;
+      } else {
+        document.getElementById('dash-adv-avg').textContent = `0%`;
+      }
+
+      // Syllabus Progress Metric
+      let totalChapters = 0;
+      let completedChapters = 0;
+      Object.keys(DEFAULT_SYLLABUS).forEach(sub => {
+        DEFAULT_SYLLABUS[sub].forEach(chap => {
+          totalChapters++;
+          if (appData.syllabusProgress[`${sub}-${chap}`]) completedChapters++;
+        });
+      });
+      const syllabusPct = totalChapters > 0 ? Math.round((completedChapters / totalChapters) * 100) : 0;
+      document.getElementById('dash-syllabus-progress').textContent = `${syllabusPct}%`;
+
+      // Render Mains Table
+      const mainsBody = document.getElementById('mains-table-body');
+      if (appData.mainsTests.length === 0) {
+        mainsBody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-xs text-gray-500">No mock tests logged yet. All scores start at zero.</td></tr>`;
+      } else {
+        mainsBody.innerHTML = appData.mainsTests.map((t, idx) => `
+          <tr class="hover:bg-white/5">
+            <td class="p-4 text-gray-400">${t.date}</td>
+            <td class="p-4 font-medium text-white">${t.name}</td>
+            <td class="p-4 text-gray-300">${t.p}</td>
+            <td class="p-4 text-gray-300">${t.c}</td>
+            <td class="p-4 text-gray-300">${t.m}</td>
+            <td class="p-4 font-bold text-purple-400">${t.total}</td>
+            <td class="p-4 text-right"><button onclick="deleteMains(${idx})" class="text-red-400 hover:text-red-300 text-xs"><i data-lucide="trash" class="w-4 h-4"></i></button></td>
+          </tr>
+        `).join('');
+      }
+
+      // Render Advanced Table
+      const advBody = document.getElementById('adv-table-body');
+      if (appData.advTests.length === 0) {
+        advBody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-xs text-gray-500">No advanced tests logged yet.</td></tr>`;
+      } else {
+        advBody.innerHTML = appData.advTests.map((t, idx) => `
+          <tr class="hover:bg-white/5">
+            <td class="p-4 text-gray-400">${t.date}</td>
+            <td class="p-4 font-medium text-white">${t.name}</td>
+            <td class="p-4 text-gray-300">${t.score}</td>
+            <td class="p-4 text-gray-300">${t.max}</td>
+            <td class="p-4 font-bold text-emerald-400">${((t.score / t.max) * 100).toFixed(1)}%</td>
+            <td class="p-4 text-right"><button onclick="deleteAdv(${idx})" class="text-red-400 hover:text-red-300 text-xs"><i data-lucide="trash" class="w-4 h-4"></i></button></td>
+          </tr>
+        `).join('');
+      }
+
+      // Render Study Hours Table
+      const hoursBody = document.getElementById('hours-table-body');
+      if (appData.studyLogs.length === 0) {
+        hoursBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-xs text-gray-500">No study hours logged yet.</td></tr>`;
+      } else {
+        hoursBody.innerHTML = appData.studyLogs.map((l, idx) => `
+          <tr class="hover:bg-white/5">
+            <td class="p-4 text-gray-400">${l.date}</td>
+            <td class="p-4 font-medium text-purple-400">${l.subject}</td>
+            <td class="p-4 text-white font-semibold">${l.hours} hrs</td>
+            <td class="p-4 text-gray-300">${l.topic || '-'}</td>
+            <td class="p-4 text-right"><button onclick="deleteHour(${idx})" class="text-red-400 hover:text-red-300 text-xs"><i data-lucide="trash" class="w-4 h-4"></i></button></td>
+          </tr>
+        `).join('');
+      }
+
+      // Render Todo List
+      const todoContainer = document.getElementById('todo-container');
+      if (appData.todos.length === 0) {
+        todoContainer.innerHTML = `<div class="glass-panel p-6 text-center text-xs text-gray-500 rounded-2xl">No pending tasks. Add a task above to begin.</div>`;
+      } else {
+        todoContainer.innerHTML = appData.todos.map((todo, idx) => `
+          <div class="glass-panel p-3.5 rounded-xl flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <input type="checkbox" ${todo.done ? 'checked' : ''} onchange="toggleTodo(${idx})" class="w-4 h-4 accent-purple-500 rounded cursor-pointer">
+              <span class="text-sm ${todo.done ? 'line-through text-gray-500' : 'text-white'}">${todo.text}</span>
             </div>
+            <button onclick="deleteTodo(${idx})" class="text-gray-500 hover:text-red-400"><i data-lucide="x" class="w-4 h-4"></i></button>
+          </div>
+        `).join('');
+      }
 
-            <!-- Top Summary Metric Cards -->
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                <!-- Card 1 -->
-                <div class="bg-cardBg p-4 rounded-2xl border border-slate-800/80 hover:border-slate-700 transition">
-                    <div class="flex justify-between items-center text-slate-400 text-xs font-semibold uppercase">
-                        <span>Latest Mains</span>
-                        <i class="fa-solid fa-bullseye text-accent"></i>
-                    </div>
-                    <div class="mt-3">
-                        <span class="text-2xl font-bold text-white" id="dash-mains-score">--</span>
-                        <span class="text-xs text-slate-500">/ 300</span>
-                    </div>
-                </div>
-                <!-- Card 2 -->
-                <div class="bg-cardBg p-4 rounded-2xl border border-slate-800/80 hover:border-slate-700 transition">
-                    <div class="flex justify-between items-center text-slate-400 text-xs font-semibold uppercase">
-                        <span>Latest Adv.</span>
-                        <i class="fa-solid fa-trophy text-purple-400"></i>
-                    </div>
-                    <div class="mt-3">
-                        <span class="text-2xl font-bold text-white" id="dash-adv-score">--</span>
-                        <span class="text-xs text-slate-500">/ 360</span>
-                    </div>
-                </div>
-                <!-- Card 3 -->
-                <div class="bg-cardBg p-4 rounded-2xl border border-slate-800/80 hover:border-slate-700 transition">
-                    <div class="flex justify-between items-center text-slate-400 text-xs font-semibold uppercase">
-                        <span>Zero-Backlog</span>
-                        <i class="fa-solid fa-fire text-amber-500"></i>
-                    </div>
-                    <div class="mt-3">
-                        <span class="text-2xl font-bold text-white" id="dash-streak">0d</span>
-                        <p class="text-xs text-slate-500">Streak Active</p>
-                    </div>
-                </div>
-                <!-- Card 4 -->
-                <div class="bg-cardBg p-4 rounded-2xl border border-slate-800/80 hover:border-slate-700 transition">
-                    <div class="flex justify-between items-center text-slate-400 text-xs font-semibold uppercase">
-                        <span>Pending To-Do</span>
-                        <i class="fa-regular fa-clock text-blue-400"></i>
-                    </div>
-                    <div class="mt-3">
-                        <span class="text-2xl font-bold text-white" id="dash-pending-todo">0</span>
-                        <p class="text-xs text-slate-500">Tasks Pending</p>
-                    </div>
-                </div>
-                <!-- Card 5 (Countdown) -->
-                <div class="bg-cardBg p-4 rounded-2xl border border-slate-800/80 hover:border-slate-700 transition col-span-2 sm:col-span-1">
-                    <div class="flex justify-between items-center text-slate-400 text-xs font-semibold uppercase">
-                        <span>JEE Mains '27</span>
-                        <i class="fa-solid fa-hourglass-half text-emerald-400"></i>
-                    </div>
-                    <div class="mt-3">
-                        <span class="text-2xl font-bold text-emerald-400" id="dash-countdown">--</span>
-                        <span class="text-xs text-slate-500">Days left</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Charts Section -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Score Trend Graph -->
-                <div class="lg:col-span-2 bg-cardBg p-5 rounded-2xl border border-slate-800/80 flex flex-col justify-between">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-accent"></span>
-                            Score Trend (Mains vs Adv)
-                        </h2>
-                        <span class="text-xs text-slate-500">Recent Test Performance</span>
-                    </div>
-                    <div class="h-64 w-full relative">
-                        <canvas id="dashboardScoreChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Today's Study & Quick Log -->
-                <div class="bg-cardBg p-5 rounded-2xl border border-slate-800/80 flex flex-col justify-between space-y-4">
-                    <div>
-                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Today's Study</p>
-                        <h3 class="text-3xl font-extrabold text-white" id="dash-today-hours">0.0 <span class="text-sm font-normal text-slate-400">hrs</span></h3>
-                        <div class="flex text-xs space-x-3 mt-2 text-slate-400">
-                            <span class="text-purple-400">Lec: <span id="dash-lec-hrs">0</span>h</span>
-                            <span class="text-emerald-400">Prac: <span id="dash-prac-hrs">0</span>h</span>
-                            <span class="text-amber-400">Rev: <span id="dash-rev-hrs">0</span>h</span>
-                        </div>
-                    </div>
-
-                    <div class="space-y-2">
-                        <p class="text-xs text-slate-500 uppercase font-semibold">Quick Log Activity</p>
-                        <div class="grid grid-cols-3 gap-2">
-                            <button onclick="quickLog('Lecture')" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-purple-900/30 hover:border-purple-500/50 border border-slate-700/60 text-xs font-medium text-slate-300 transition flex flex-col items-center">
-                                <i class="fa-solid fa-play text-purple-400 mb-1"></i>
-                                Lecture
-                            </button>
-                            <button onclick="quickLog('Practice')" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-emerald-900/30 hover:border-emerald-500/50 border border-slate-700/60 text-xs font-medium text-slate-300 transition flex flex-col items-center">
-                                <i class="fa-solid fa-pen text-emerald-400 mb-1"></i>
-                                Practice
-                            </button>
-                            <button onclick="quickLog('Revision')" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-amber-900/30 hover:border-amber-500/50 border border-slate-700/60 text-xs font-medium text-slate-300 transition flex flex-col items-center">
-                                <i class="fa-solid fa-rotate-left text-amber-400 mb-1"></i>
-                                Revision
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Lower Grid (Syllabus Progress & Quick Status) -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Syllabus Progress Overview -->
-                <div class="lg:col-span-2 bg-cardBg p-5 rounded-2xl border border-slate-800/80 space-y-4">
-                    <div class="flex justify-between items-center">
-                        <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-400">Syllabus Progress</h3>
-                        <button onclick="switchTab('syllabus')" class="text-xs text-accent hover:underline">View Detailed Syllabus &rarr;</button>
-                    </div>
-
-                    <!-- Progress Bars -->
-                    <div class="space-y-3">
-                        <div>
-                            <div class="flex justify-between text-xs font-medium mb-1">
-                                <span class="text-slate-300">Physics</span>
-                                <span class="text-physics font-bold" id="dash-phy-pct">0%</span>
-                            </div>
-                            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                                <div id="dash-phy-bar" class="bg-physics h-full transition-all duration-500" style="width: 0%"></div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="flex justify-between text-xs font-medium mb-1">
-                                <span class="text-slate-300">Chemistry</span>
-                                <span class="text-chemistry font-bold" id="dash-chem-pct">0%</span>
-                            </div>
-                            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                                <div id="dash-chem-bar" class="bg-chemistry h-full transition-all duration-500" style="width: 0%"></div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="flex justify-between text-xs font-medium mb-1">
-                                <span class="text-slate-300">Mathematics</span>
-                                <span class="text-maths font-bold" id="dash-math-pct">0%</span>
-                            </div>
-                            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                                <div id="dash-math-bar" class="bg-maths h-full transition-all duration-500" style="width: 0%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Backlog Quick Status -->
-                <div class="bg-cardBg p-5 rounded-2xl border border-slate-800/80 space-y-4 flex flex-col justify-between">
-                    <div>
-                        <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-3">Quick Backlog Status</h3>
-                        <div class="space-y-2">
-                            <div class="flex justify-between items-center p-2.5 rounded-xl bg-slate-900/50 border border-slate-800">
-                                <span class="text-xs font-medium text-physics">Physics</span>
-                                <span class="text-xs font-bold text-slate-300" id="dash-phy-backlog-cnt">0 pending</span>
-                            </div>
-                            <div class="flex justify-between items-center p-2.5 rounded-xl bg-slate-900/50 border border-slate-800">
-                                <span class="text-xs font-medium text-chemistry">Chemistry</span>
-                                <span class="text-xs font-bold text-slate-300" id="dash-chem-backlog-cnt">0 pending</span>
-                            </div>
-                            <div class="flex justify-between items-center p-2.5 rounded-xl bg-slate-900/50 border border-slate-800">
-                                <span class="text-xs font-medium text-maths">Maths</span>
-                                <span class="text-xs font-bold text-slate-300" id="dash-math-backlog-cnt">0 pending</span>
-                            </div>
-                        </div>
-                    </div>
-                    <button onclick="switchTab('backlog')" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 rounded-xl transition">
-                        Manage Backlogs
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW: JEE MAINS -->
-        <section id="view-mains" class="view-content space-y-6 hidden">
-            <!-- Header -->
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 class="text-2xl font-bold text-white flex items-center gap-3">
-                        <i class="fa-solid fa-list-check text-accent"></i> JEE Mains Tracker
-                    </h1>
-                    <p class="text-xs text-slate-400 mt-0.5">Mock test tracker, score analytics & subject breakdown</p>
-                </div>
-                <button onclick="openAddTestModal('mains')" class="bg-accent hover:bg-accentHover text-white text-xs md:text-sm px-4 py-2.5 rounded-xl font-medium transition flex items-center space-x-2 shadow-lg shadow-accent/20">
-                    <i class="fa-solid fa-plus"></i>
-                    <span>+ Add Score</span>
-                </button>
-            </div>
-
-            <!-- Stats Bar -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="bg-cardBg p-4 rounded-2xl border border-slate-800">
-                    <p class="text-xs font-semibold uppercase text-slate-500">Tests Taken</p>
-                    <h3 class="text-2xl font-bold text-white mt-1" id="mains-tests-count">0</h3>
-                </div>
-                <div class="bg-cardBg p-4 rounded-2xl border border-slate-800">
-                    <p class="text-xs font-semibold uppercase text-slate-500">Latest Score</p>
-                    <h3 class="text-2xl font-bold text-accent mt-1" id="mains-latest-score">0 / 300</h3>
-                </div>
-                <div class="bg-cardBg p-4 rounded-2xl border border-slate-800">
-                    <p class="text-xs font-semibold uppercase text-slate-500">Best Score</p>
-                    <h3 class="text-2xl font-bold text-emerald-400 mt-1" id="mains-best-score">0</h3>
-                </div>
-                <div class="bg-cardBg p-4 rounded-2xl border border-slate-800">
-                    <p class="text-xs font-semibold uppercase text-slate-500">Average Score</p>
-                    <h3 class="text-2xl font-bold text-amber-400 mt-1" id="mains-avg-score">0</h3>
-                </div>
-            </div>
-
-            <!-- Mains Charts -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-cardBg p-5 rounded-2xl border border-slate-800">
-                    <h3 class="text-xs font-semibold uppercase text-slate-400 mb-4">Score Trend (Over Time)</h3>
-                    <div class="h-60 relative">
-                        <canvas id="mainsTrendChart"></canvas>
-                    </div>
-                </div>
-                <div class="bg-cardBg p-5 rounded-2xl border border-slate-800">
-                    <h3 class="text-xs font-semibold uppercase text-slate-400 mb-4">Average Subject Breakdown</h3>
-                    <div class="h-60 relative">
-                        <canvas id="mainsSubjectChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Table Logs -->
-            <div class="bg-cardBg rounded-2xl border border-slate-800 overflow-hidden">
-                <div class="p-4 border-b border-slate-800 font-semibold text-sm text-slate-300">
-                    Logged Mains Tests
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-900/60 text-slate-400 uppercase border-b border-slate-800">
-                            <tr>
-                                <th class="p-3">Date</th>
-                                <th class="p-3">Test Name</th>
-                                <th class="p-3">Physics</th>
-                                <th class="p-3">Chemistry</th>
-                                <th class="p-3">Maths</th>
-                                <th class="p-3">Total Score</th>
-                                <th class="p-3 text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="mains-test-rows" class="divide-y divide-slate-800/60">
-                            <!-- Populated dynamically -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW: JEE ADVANCED -->
-        <section id="view-advanced" class="view-content space-y-6 hidden">
-            <!-- Header -->
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 class="text-2xl font-bold text-white flex items-center gap-3">
-                        <i class="fa-solid fa-award text-purple-400"></i> JEE Advanced Tracker
-                    </h1>
-                    <p class="text-xs text-slate-400 mt-0.5">Paper 1 & 2 performance breakdown and analysis</p>
-                </div>
-                <button onclick="openAddTestModal('advanced')" class="bg-accent hover:bg-accentHover text-white text-xs md:text-sm px-4 py-2.5 rounded-xl font-medium transition flex items-center space-x-2 shadow-lg shadow-accent/20">
-                    <i class="fa-solid fa-plus"></i>
-                    <span>+ Add Score</span>
-                </button>
-            </div>
-
-            <!-- Stats Bar -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="bg-cardBg p-4 rounded-2xl border border-slate-800">
-                    <p class="text-xs font-semibold uppercase text-slate-500">Tests Taken</p>
-                    <h3 class="text-2xl font-bold text-white mt-1" id="adv-tests-count">0</h3>
-                </div>
-                <div class="bg-cardBg p-4 rounded-2xl border border-slate-800">
-                    <p class="text-xs font-semibold uppercase text-slate-500">Latest Score</p>
-                    <h3 class="text-2xl font-bold text-accent mt-1" id="adv-latest-score">0 / 360</h3>
-                </div>
-                <div class="bg-cardBg p-4 rounded-2xl border border-slate-800">
-                    <p class="text-xs font-semibold uppercase text-slate-500">Best Score</p>
-                    <h3 class="text-2xl font-bold text-emerald-400 mt-1" id="adv-best-score">0</h3>
-                </div>
-                <div class="bg-cardBg p-4 rounded-2xl border border-slate-800">
-                    <p class="text-xs font-semibold uppercase text-slate-500">Average %</p>
-                    <h3 class="text-2xl font-bold text-amber-400 mt-1" id="adv-avg-pct">0%</h3>
-                </div>
-            </div>
-
-            <!-- Advanced Charts -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-cardBg p-5 rounded-2xl border border-slate-800">
-                    <h3 class="text-xs font-semibold uppercase text-slate-400 mb-4">Advanced Score Progression</h3>
-                    <div class="h-60 relative">
-                        <canvas id="advTrendChart"></canvas>
-                    </div>
-                </div>
-                <div class="bg-cardBg p-5 rounded-2xl border border-slate-800">
-                    <h3 class="text-xs font-semibold uppercase text-slate-400 mb-4">Paper 1 vs Paper 2 Breakdown</h3>
-                    <div class="h-60 relative">
-                        <canvas id="advPaperChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Table Logs -->
-            <div class="bg-cardBg rounded-2xl border border-slate-800 overflow-hidden">
-                <div class="p-4 border-b border-slate-800 font-semibold text-sm text-slate-300">
-                    Logged JEE Advanced Tests
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-900/60 text-slate-400 uppercase border-b border-slate-800">
-                            <tr>
-                                <th class="p-3">Date</th>
-                                <th class="p-3">Test Title</th>
-                                <th class="p-3">Paper 1</th>
-                                <th class="p-3">Paper 2</th>
-                                <th class="p-3">Total Score</th>
-                                <th class="p-3 text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adv-test-rows" class="divide-y divide-slate-800/60">
-                            <!-- Populated dynamically -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW: COMPARE -->
-        <section id="view-compare" class="view-content space-y-6 hidden">
+      // Render Backlog List
+      const backlogList = document.getElementById('backlog-list');
+      if (appData.backlogs.length === 0) {
+        backlogList.innerHTML = `<div class="p-6 text-center text-xs text-gray-500">No backlogs recorded. Excellent progress!</div>`;
+      } else {
+        backlogList.innerHTML = appData.backlogs.map((item, idx) => `
+          <div class="p-4 flex items-center justify-between gap-4 hover:bg-white/5">
             <div>
-                <h1 class="text-2xl font-bold text-white flex items-center gap-3">
-                    <i class="fa-solid fa-code-compare text-accent"></i> Mains vs Advanced Analytics
-                </h1>
-                <p class="text-xs text-slate-400 mt-0.5">Deep comparative insights, subject radar strengths and score trends</p>
+              <span class="text-xs px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 font-medium">${item.subject}</span>
+              <p class="text-sm font-medium text-white mt-1">${item.topic}</p>
             </div>
+            <button onclick="deleteBacklog(${idx})" class="text-xs text-emerald-400 hover:underline flex items-center gap-1">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i> Clear Backlog
+            </button>
+          </div>
+        `).join('');
+      }
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Subject Radar Chart -->
-                <div class="bg-cardBg p-5 rounded-2xl border border-slate-800 flex flex-col items-center">
-                    <h3 class="text-xs font-semibold uppercase text-slate-400 mb-4 w-full">Subject Strength Radar</h3>
-                    <div class="h-64 w-full max-w-xs relative">
-                        <canvas id="compareRadarChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Comparison Bar Chart -->
-                <div class="bg-cardBg p-5 rounded-2xl border border-slate-800">
-                    <h3 class="text-xs font-semibold uppercase text-slate-400 mb-4">Average Percentage Accuracy</h3>
-                    <div class="h-64 relative">
-                        <canvas id="compareBarChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW: STUDY HOURS -->
-        <section id="view-hours" class="view-content space-y-6 hidden">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 class="text-2xl font-bold text-white flex items-center gap-3">
-                        <i class="fa-regular fa-clock text-accent"></i> Study Hours Tracker
-                    </h1>
-                    <p class="text-xs text-slate-400 mt-0.5">Lecture • Practice • Revision detailed hour tracking</p>
-                </div>
-                <button onclick="openLogHoursModal()" class="bg-accent hover:bg-accentHover text-white text-xs md:text-sm px-4 py-2.5 rounded-xl font-medium transition flex items-center space-x-2 shadow-lg shadow-accent/20">
-                    <i class="fa-solid fa-plus"></i>
-                    <span>+ Log Hours</span>
-                </button>
-            </div>
-
-            <!-- Stat Summary Cards -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="bg-cardBg p-4 rounded-2xl border border-slate-800">
-                    <p class="text-xs font-semibold uppercase text-slate-500">Total Hours</p>
-                    <h3 class="text-2xl font-bold text-white mt-1" id="hours-total">0.0h</h3>
-                </div>
-                <div class="bg-cardBg p-4 rounded-2xl border border-slate-800">
-                    <p class="text-xs font-semibold uppercase text-slate-500">Avg / Day</p>
-                    <h3 class="text-2xl font-bold text-accent mt-1" id="hours-avg">0.0h</h3>
-                </div>
-                <div class="bg-cardBg p-4 rounded-2xl border border-slate-800">
-                    <p class="text-xs font-semibold uppercase text-slate-500">Best Day</p>
-                    <h3 class="text-2xl font-bold text-emerald-400 mt-1" id="hours-best">0.0h</h3>
-                </div>
-                <div class="bg-cardBg p-4 rounded-2xl border border-slate-800">
-                    <p class="text-xs font-semibold uppercase text-slate-500">Active Days</p>
-                    <h3 class="text-2xl font-bold text-amber-400 mt-1" id="hours-active-days">0</h3>
-                </div>
-            </div>
-
-            <!-- Daily Hours Chart -->
-            <div class="bg-cardBg p-5 rounded-2xl border border-slate-800">
-                <h3 class="text-xs font-semibold uppercase text-slate-400 mb-4">Daily Hours (Last 7 Days)</h3>
-                <div class="h-60 relative">
-                    <canvas id="studyHoursChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Heatmap Grid -->
-            <div class="bg-cardBg p-5 rounded-2xl border border-slate-800 space-y-3">
-                <h3 class="text-xs font-semibold uppercase text-slate-400">Consistency Heatmap (Recent)</h3>
-                <div class="grid grid-cols-7 sm:grid-cols-14 md:grid-cols-28 gap-1.5 pt-2" id="heatmap-grid">
-                    <!-- Populated dynamically -->
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW: TO-DO -->
-        <section id="view-todo" class="view-content space-y-6 hidden">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 class="text-2xl font-bold text-white flex items-center gap-3">
-                        <i class="fa-regular fa-square-check text-accent"></i> Subject Daily To-Do
-                    </h1>
-                    <p class="text-xs text-slate-400 mt-0.5">Keep track of your daily study targets</p>
-                </div>
-                <button onclick="openAddTaskModal('todo')" class="bg-accent hover:bg-accentHover text-white text-xs md:text-sm px-4 py-2.5 rounded-xl font-medium transition flex items-center space-x-2">
-                    <i class="fa-solid fa-plus"></i>
-                    <span>+ Add Task</span>
-                </button>
-            </div>
-
-            <!-- Filters -->
-            <div class="flex space-x-2 border-b border-slate-800 pb-3">
-                <button onclick="filterTodo('All')" class="todo-filter-btn text-xs px-3 py-1.5 rounded-lg bg-accent text-white font-medium">All</button>
-                <button onclick="filterTodo('Physics')" class="todo-filter-btn text-xs px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white font-medium">Physics</button>
-                <button onclick="filterTodo('Chemistry')" class="todo-filter-btn text-xs px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white font-medium">Chemistry</button>
-                <button onclick="filterTodo('Maths')" class="todo-filter-btn text-xs px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white font-medium">Maths</button>
-            </div>
-
-            <!-- Task Container List -->
-            <div id="todo-list" class="space-y-2">
-                <!-- Dynamic tasks here -->
-            </div>
-        </section>
-
-        <!-- VIEW: BACKLOG -->
-        <section id="view-backlog" class="view-content space-y-6 hidden">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 class="text-2xl font-bold text-white flex items-center gap-3">
-                        <i class="fa-solid fa-thumbtack text-accent"></i> Backlog Tracker
-                    </h1>
-                    <p class="text-xs text-slate-400 mt-0.5">Zero backlogs = streak intact</p>
-                </div>
-                <button onclick="openAddTaskModal('backlog')" class="bg-amber-500 hover:bg-amber-600 text-white text-xs md:text-sm px-4 py-2.5 rounded-xl font-medium transition flex items-center space-x-2">
-                    <i class="fa-solid fa-plus"></i>
-                    <span>+ Add Backlog Topic</span>
-                </button>
-            </div>
-
-            <!-- Subject Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-cardBg p-5 rounded-2xl border border-slate-800 flex items-center justify-between">
-                    <div>
-                        <span class="text-xs font-bold uppercase text-physics">Physics Backlogs</span>
-                        <h2 class="text-2xl font-bold text-white mt-1" id="backlog-phy-count">0</h2>
-                    </div>
-                    <i class="fa-solid fa-atom text-physics/30 text-3xl"></i>
-                </div>
-                <div class="bg-cardBg p-5 rounded-2xl border border-slate-800 flex items-center justify-between">
-                    <div>
-                        <span class="text-xs font-bold uppercase text-chemistry">Chemistry Backlogs</span>
-                        <h2 class="text-2xl font-bold text-white mt-1" id="backlog-chem-count">0</h2>
-                    </div>
-                    <i class="fa-solid fa-flask text-chemistry/30 text-3xl"></i>
-                </div>
-                <div class="bg-cardBg p-5 rounded-2xl border border-slate-800 flex items-center justify-between">
-                    <div>
-                        <span class="text-xs font-bold uppercase text-maths">Maths Backlogs</span>
-                        <h2 class="text-2xl font-bold text-white mt-1" id="backlog-math-count">0</h2>
-                    </div>
-                    <i class="fa-solid fa-calculator text-maths/30 text-3xl"></i>
-                </div>
-            </div>
-
-            <!-- Backlog Items List -->
-            <div id="backlog-list" class="space-y-2">
-                <!-- Dynamic Backlogs -->
-            </div>
-        </section>
-
-        <!-- VIEW: SYLLABUS -->
-        <section id="view-syllabus" class="view-content space-y-6 hidden">
-            <div>
-                <h1 class="text-2xl font-bold text-white flex items-center gap-3">
-                    <i class="fa-solid fa-book-bookmark text-accent"></i> JEE Syllabus Tracker
-                </h1>
-                <p class="text-xs text-slate-400 mt-0.5">Complete JEE Mains & Advanced chapter unit checklist</p>
-            </div>
-
-            <!-- Overall Progress bar card -->
-            <div class="bg-cardBg p-5 rounded-2xl border border-slate-800">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-xs font-semibold uppercase text-slate-400">Total Completion</span>
-                    <span class="text-lg font-bold text-accent" id="syllabus-total-pct">0%</span>
-                </div>
-                <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden">
-                    <div id="syllabus-total-bar" class="bg-accent h-full transition-all duration-500" style="width: 0%"></div>
-                </div>
-            </div>
-
-            <!-- Syllabus Accordions / Groups -->
-            <div id="syllabus-container" class="space-y-4">
-                <!-- Dynamically generated units and chapters -->
-            </div>
-        </section>
-
-        <!-- VIEW: PRACTICE LOG -->
-        <section id="view-practice" class="view-content space-y-6 hidden">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 class="text-2xl font-bold text-white flex items-center gap-3">
-                        <i class="fa-solid fa-pen-to-square text-accent"></i> Practice Log
-                    </h1>
-                    <p class="text-xs text-slate-400 mt-0.5">Every question counts — track it, see it add up</p>
-                </div>
-                <button onclick="openLogPracticeModal()" class="bg-accent hover:bg-accentHover text-white text-xs md:text-sm px-4 py-2.5 rounded-xl font-medium transition flex items-center space-x-2">
-                    <i class="fa-solid fa-plus"></i>
-                    <span>+ Log Practice</span>
-                </button>
-            </div>
-
-            <!-- Log List -->
-            <div class="bg-cardBg rounded-2xl border border-slate-800 overflow-hidden">
-                <div class="p-4 border-b border-slate-800 font-semibold text-sm text-slate-300">
-                    Logged Practice Sessions
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-900/60 text-slate-400 uppercase border-b border-slate-800">
-                            <tr>
-                                <th class="p-3">Date</th>
-                                <th class="p-3">Subject</th>
-                                <th class="p-3">Chapter / Topic</th>
-                                <th class="p-3">Questions Solved</th>
-                                <th class="p-3 text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="practice-log-rows" class="divide-y divide-slate-800/60">
-                            <!-- Dynamically logged rows -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- MODAL: ADD MOCK TEST -->
-    <div id="modal-test" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-cardBg border border-slate-800 rounded-2xl w-full max-w-md p-6 space-y-4 shadow-2xl">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="text-base font-bold text-white" id="modal-test-title">Add Mock Test Score</h3>
-                <button onclick="closeModal('modal-test')" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form id="form-test" onsubmit="handleSaveTest(event)" class="space-y-3 text-xs">
-                <input type="hidden" id="test-type" value="mains">
-                <div>
-                    <label class="text-slate-400 mb-1 block">Test Title / Name</label>
-                    <input type="text" id="test-name" placeholder="e.g. Full Test 01" required class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-accent">
-                </div>
-                <div class="grid grid-cols-3 gap-2">
-                    <div>
-                        <label class="text-physics mb-1 block">Physics</label>
-                        <input type="number" id="test-phy" min="0" max="120" required class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-physics">
-                    </div>
-                    <div>
-                        <label class="text-chemistry mb-1 block">Chemistry</label>
-                        <input type="number" id="test-chem" min="0" max="120" required class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-chemistry">
-                    </div>
-                    <div>
-                        <label class="text-maths mb-1 block">Maths</label>
-                        <input type="number" id="test-math" min="0" max="120" required class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-maths">
-                    </div>
-                </div>
-                <div class="flex justify-end space-x-2 pt-3">
-                    <button type="button" onclick="closeModal('modal-test')" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-accent hover:bg-accentHover text-white rounded-xl font-medium">Save Test Score</button>
-                </div>
-            </form>
+      // Render Syllabus Checklist
+      const syllabusGrid = document.getElementById('syllabus-grid');
+      syllabusGrid.innerHTML = Object.keys(DEFAULT_SYLLABUS).map(sub => `
+        <div class="glass-panel p-5 rounded-2xl border border-[#232336]">
+          <h3 class="font-bold text-white mb-3 flex items-center justify-between">
+            <span>${sub}</span>
+            <span class="text-xs text-purple-400 font-normal">
+              ${DEFAULT_SYLLABUS[sub].filter(c => appData.syllabusProgress[`${sub}-${c}`]).length} / ${DEFAULT_SYLLABUS[sub].length}
+            </span>
+          </h3>
+          <div class="space-y-2 mt-2">
+            ${DEFAULT_SYLLABUS[sub].map(chap => {
+              const key = `${sub}-${chap}`;
+              const checked = !!appData.syllabusProgress[key];
+              return `
+                <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-white/5 cursor-pointer text-xs">
+                  <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleSyllabus('${key}')" class="w-3.5 h-3.5 accent-purple-500 rounded">
+                  <span class="${checked ? 'line-through text-gray-500' : 'text-gray-300'}">${chap}</span>
+                </label>
+              `;
+            }).join('')}
+          </div>
         </div>
-    </div>
-
-    <!-- MODAL: LOG HOURS -->
-    <div id="modal-hours" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-cardBg border border-slate-800 rounded-2xl w-full max-w-md p-6 space-y-4 shadow-2xl">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="text-base font-bold text-white">Log Study Hours</h3>
-                <button onclick="closeModal('modal-hours')" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form id="form-hours" onsubmit="handleSaveHours(event)" class="space-y-3 text-xs">
-                <div>
-                    <label class="text-slate-400 mb-1 block">Activity Type</label>
-                    <select id="hours-category" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-accent">
-                        <option value="Lecture">Lecture</option>
-                        <option value="Practice">Practice</option>
-                        <option value="Revision">Revision</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="text-slate-400 mb-1 block">Hours Spent</label>
-                    <input type="number" step="0.5" id="hours-val" min="0.5" max="16" placeholder="2.5" required class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-accent">
-                </div>
-                <div class="flex justify-end space-x-2 pt-3">
-                    <button type="button" onclick="closeModal('modal-hours')" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-accent hover:bg-accentHover text-white rounded-xl font-medium">Log Hours</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL: ADD TASK/BACKLOG -->
-    <div id="modal-task" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-cardBg border border-slate-800 rounded-2xl w-full max-w-md p-6 space-y-4 shadow-2xl">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="text-base font-bold text-white" id="modal-task-title">Add New Task</h3>
-                <button onclick="closeModal('modal-task')" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form id="form-task" onsubmit="handleSaveTask(event)" class="space-y-3 text-xs">
-                <input type="hidden" id="task-type-input" value="todo">
-                <div>
-                    <label class="text-slate-400 mb-1 block">Subject</label>
-                    <select id="task-subject" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-accent">
-                        <option value="Physics">Physics</option>
-                        <option value="Chemistry">Chemistry</option>
-                        <option value="Maths">Maths</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="text-slate-400 mb-1 block">Task Description / Topic</label>
-                    <input type="text" id="task-desc" placeholder="e.g. Solve Rotational Motion PYQs" required class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-accent">
-                </div>
-                <div class="flex justify-end space-x-2 pt-3">
-                    <button type="button" onclick="closeModal('modal-task')" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-accent hover:bg-accentHover text-white rounded-xl font-medium">Add Item</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL: LOG PRACTICE -->
-    <div id="modal-practice" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-cardBg border border-slate-800 rounded-2xl w-full max-w-md p-6 space-y-4 shadow-2xl">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="text-base font-bold text-white">Log Practice Questions</h3>
-                <button onclick="closeModal('modal-practice')" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form id="form-practice" onsubmit="handleSavePractice(event)" class="space-y-3 text-xs">
-                <div>
-                    <label class="text-slate-400 mb-1 block">Subject</label>
-                    <select id="practice-subject" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-accent">
-                        <option value="Physics">Physics</option>
-                        <option value="Chemistry">Chemistry</option>
-                        <option value="Maths">Maths</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="text-slate-400 mb-1 block">Chapter Title</label>
-                    <input type="text" id="practice-chapter" placeholder="e.g. Thermodynamics" required class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-accent">
-                </div>
-                <div>
-                    <label class="text-slate-400 mb-1 block">Questions Solved</label>
-                    <input type="number" id="practice-count" min="1" placeholder="30" required class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-accent">
-                </div>
-                <div class="flex justify-end space-x-2 pt-3">
-                    <button type="button" onclick="closeModal('modal-practice')" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-accent hover:bg-accentHover text-white rounded-xl font-medium">Log Session</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <script>
-        // Data Structures & Storage Initializer
-        const defaultData = {
-            mainsTests: [
-                { id: 1, date: '2026-09-10', name: 'Part Test 01', phy: 72, chem: 65, math: 58, total: 195 },
-                { id: 2, date: '2026-09-20', name: 'Full Mock 01', phy: 80, chem: 70, math: 64, total: 214 }
-            ],
-            advTests: [
-                { id: 1, date: '2026-09-15', name: 'Adv Mock 01', p1: 90, p2: 85, total: 175 }
-            ],
-            studyLogs: [
-                { id: 1, date: '2026-09-27', category: 'Lecture', hours: 3 },
-                { id: 2, date: '2026-09-27', category: 'Practice', hours: 2.5 }
-            ],
-            tasks: [
-                { id: 1, type: 'todo', subject: 'Physics', desc: 'Revise Capacitance formulas', done: false },
-                { id: 2, type: 'todo', subject: 'Chemistry', desc: 'Complete Electrochemistry NCERT exercises', done: true },
-                { id: 3, type: 'backlog', subject: 'Maths', desc: 'Integration Substitution method', done: false }
-            ],
-            practiceLogs: [
-                { id: 1, date: '2026-09-27', subject: 'Physics', chapter: 'Current Electricity', count: 45 }
-            ],
-            syllabus: {
-                "Mechanics": { subject: "Physics", chapters: ["Units & Dimensions", "Kinematics", "Laws of Motion", "Work, Power & Energy", "Rotational Motion"] },
-                "Electromagnetism": { subject: "Physics", chapters: ["Electrostatics", "Capacitance", "Current Electricity", "Magnetism", "EM Induction"] },
-                "Thermodynamics": { subject: "Physics", chapters: ["Thermal Properties", "Thermodynamics", "Kinetic Theory"] },
-                "Physical Chem": { subject: "Chemistry", chapters: ["Mole Concept", "Atomic Structure", "Thermodynamics", "Chemical Equilibrium", "Electrochemistry"] },
-                "Organic Chem": { subject: "Chemistry", chapters: ["GOC", "Hydrocarbons", "Haloalkanes", "Aldehydes & Ketones"] },
-                "Calculus": { subject: "Maths", chapters: ["Limits & Continuity", "Differentiation", "Application of Derivatives", "Definite Integration", "Differential Equations"] },
-                "Algebra": { subject: "Maths", chapters: ["Quadratic Equations", "Complex Numbers", "Matrices & Determinants", "Probability"] }
-            },
-            completedSyllabus: ["Units & Dimensions", "Mole Concept", "Quadratic Equations"]
-        };
-
-        // Load or Store Persistent Data
-        let appData = JSON.parse(localStorage.getItem('jee_tracker_db')) || defaultData;
-
-        function saveState() {
-            localStorage.setItem('jee_tracker_db', JSON.stringify(appData));
-            refreshUI();
-        }
-
-        // Navigation Switcher
-        function switchTab(tabId) {
-            document.querySelectorAll('.view-content').forEach(view => view.classList.add('hidden'));
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('text-accent', 'bg-accentLight', 'font-medium');
-                item.classList.add('text-slate-400');
-            });
-
-            const activeView = document.getElementById(`view-${tabId}`);
-            if (activeView) activeView.classList.remove('hidden');
-
-            const activeNav = document.getElementById(`nav-${tabId}`);
-            if (activeNav) {
-                activeNav.classList.add('text-accent', 'bg-accentLight', 'font-medium');
-                activeNav.classList.remove('text-slate-400');
-            }
-
-            // Re-render chart graphs on view load
-            if(tabId === 'compare') renderCompareCharts();
-            if(tabId === 'hours') renderHoursChart();
-        }
-
-        // Initialize Countdown & Dates
-        function setupHeaderDate() {
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
-            document.getElementById('dash-date').innerText = dateStr;
-
-            // Countdown to JEE Mains Jan 2027 placeholder target
-            const examTarget = new Date('2027-01-24');
-            const diffDays = Math.ceil((examTarget - now) / (1000 * 60 * 60 * 24));
-            document.getElementById('dash-countdown').innerText = diffDays > 0 ? diffDays : '0';
-        }
-
-        // Chart Instance Handlers
-        let dashChart, mainsChart, mainsSubChart, advChart, advPaperChart, compareRadar, compareBar, hoursChart;
-
-        function refreshUI() {
-            // Dashboard Metrics
-            const latestMains = appData.mainsTests[appData.mainsTests.length - 1];
-            document.getElementById('dash-mains-score').innerText = latestMains ? latestMains.total : '--';
-
-            const latestAdv = appData.advTests[appData.advTests.length - 1];
-            document.getElementById('dash-adv-score').innerText = latestAdv ? latestAdv.total : '--';
-
-            const pendingTodos = appData.tasks.filter(t => t.type === 'todo' && !t.done).length;
-            document.getElementById('dash-pending-todo').innerText = pendingTodos;
-
-            // Today's Study Hours Computation
-            const todayStr = new Date().toISOString().split('T')[0];
-            const todayLogs = appData.studyLogs.filter(l => l.date === todayStr);
-            const todayTotal = todayLogs.reduce((acc, curr) => acc + parseFloat(curr.hours), 0);
-            document.getElementById('dash-today-hours').innerHTML = `${todayTotal.toFixed(1)} <span class="text-sm font-normal text-slate-400">hrs</span>`;
-
-            const lecHrs = todayLogs.filter(l => l.category === 'Lecture').reduce((a, b) => a + parseFloat(b.hours), 0);
-            const pracHrs = todayLogs.filter(l => l.category === 'Practice').reduce((a, b) => a + parseFloat(b.hours), 0);
-            const revHrs = todayLogs.filter(l => l.category === 'Revision').reduce((a, b) => a + parseFloat(b.hours), 0);
-            document.getElementById('dash-lec-hrs').innerText = lecHrs;
-            document.getElementById('dash-prac-hrs').innerText = pracHrs;
-            document.getElementById('dash-rev-hrs').innerText = revHrs;
-
-            // Syllabus Computations
-            renderSyllabusProgress();
-
-            // Backlog Counts
-            const phyBacklogs = appData.tasks.filter(t => t.type === 'backlog' && t.subject === 'Physics' && !t.done).length;
-            const chemBacklogs = appData.tasks.filter(t => t.type === 'backlog' && t.subject === 'Chemistry' && !t.done).length;
-            const mathBacklogs = appData.tasks.filter(t => t.type === 'backlog' && t.subject === 'Maths' && !t.done).length;
-            
-            document.getElementById('dash-phy-backlog-cnt').innerText = `${phyBacklogs} pending`;
-            document.getElementById('dash-chem-backlog-cnt').innerText = `${chemBacklogs} pending`;
-            document.getElementById('dash-math-backlog-cnt').innerText = `${mathBacklogs} pending`;
-
-            document.getElementById('backlog-phy-count').innerText = phyBacklogs;
-            document.getElementById('backlog-chem-count').innerText = chemBacklogs;
-            document.getElementById('backlog-math-count').innerText = mathBacklogs;
-
-            // Render Tables
-            renderMainsTable();
-            renderAdvTable();
-            renderTasks('todo');
-            renderTasks('backlog');
-            renderPracticeTable();
-            renderDashboardChart();
-            renderMainsCharts();
-            renderHeatmap();
-        }
-
-        // Quick Hours Log
-        function quickLog(category) {
-            appData.studyLogs.push({
-                id: Date.now(),
-                date: new Date().toISOString().split('T')[0],
-                category: category,
-                hours: 1
-            });
-            saveState();
-        }
-
-        // Render Dashboard Line Chart
-        function renderDashboardChart() {
-            const ctx = document.getElementById('dashboardScoreChart').getContext('2d');
-            if (dashChart) dashChart.destroy();
-
-            const mainsLabels = appData.mainsTests.map(t => t.name);
-            const mainsScores = appData.mainsTests.map(t => t.total);
-
-            dashChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: mainsLabels.length ? mainsLabels : ['Test 1', 'Test 2'],
-                    datasets: [{
-                        label: 'JEE Mains Total Score',
-                        data: mainsScores.length ? mainsScores : [0, 0],
-                        borderColor: '#a855f7',
-                        backgroundColor: 'rgba(168, 85, 247, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' } },
-                        x: { grid: { display: false }, ticks: { color: '#64748b' } }
-                    }
-                }
-            });
-        }
-
-        function renderMainsTable() {
-            const tbody = document.getElementById('mains-test-rows');
-            tbody.innerHTML = '';
-
-            document.getElementById('mains-tests-count').innerText = appData.mainsTests.length;
-            if (appData.mainsTests.length > 0) {
-                const latest = appData.mainsTests[appData.mainsTests.length - 1];
-                const best = Math.max(...appData.mainsTests.map(t => t.total));
-                const avg = Math.round(appData.mainsTests.reduce((a, b) => a + b.total, 0) / appData.mainsTests.length);
-                
-                document.getElementById('mains-latest-score').innerText = `${latest.total} / 300`;
-                document.getElementById('mains-best-score').innerText = best;
-                document.getElementById('mains-avg-score').innerText = avg;
-            }
-
-            appData.mainsTests.forEach(test => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="p-3 text-slate-400">${test.date}</td>
-                    <td class="p-3 font-semibold text-white">${test.name}</td>
-                    <td class="p-3 text-physics font-medium">${test.phy}</td>
-                    <td class="p-3 text-chemistry font-medium">${test.chem}</td>
-                    <td class="p-3 text-maths font-medium">${test.math}</td>
-                    <td class="p-3 font-bold text-accent">${test.total}</td>
-                    <td class="p-3 text-right">
-                        <button onclick="deleteItem('mainsTests', ${test.id})" class="text-slate-500 hover:text-red-400"><i class="fa-regular fa-trash-can"></i></button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function renderMainsCharts() {
-            // Trend Line
-            const ctx1 = document.getElementById('mainsTrendChart').getContext('2d');
-            if (mainsChart) mainsChart.destroy();
-            mainsChart = new Chart(ctx1, {
-                type: 'line',
-                data: {
-                    labels: appData.mainsTests.map(t => t.name),
-                    datasets: [{
-                        label: 'Score',
-                        data: appData.mainsTests.map(t => t.total),
-                        borderColor: '#a855f7',
-                        tension: 0.3
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-
-            // Subject Bar
-            const ctx2 = document.getElementById('mainsSubjectChart').getContext('2d');
-            if (mainsSubChart) mainsSubChart.destroy();
-
-            const avgPhy = appData.mainsTests.length ? appData.mainsTests.reduce((a, b) => a + b.phy, 0) / appData.mainsTests.length : 0;
-            const avgChem = appData.mainsTests.length ? appData.mainsTests.reduce((a, b) => a + b.chem, 0) / appData.mainsTests.length : 0;
-            const avgMath = appData.mainsTests.length ? appData.mainsTests.reduce((a, b) => a + b.math, 0) / appData.mainsTests.length : 0;
-
-            mainsSubChart = new Chart(ctx2, {
-                type: 'bar',
-                data: {
-                    labels: ['Physics', 'Chemistry', 'Maths'],
-                    datasets: [{
-                        data: [avgPhy, avgChem, avgMath],
-                        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b']
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-        }
-
-        function renderAdvTable() {
-            const tbody = document.getElementById('adv-test-rows');
-            tbody.innerHTML = '';
-
-            document.getElementById('adv-tests-count').innerText = appData.advTests.length;
-            if (appData.advTests.length > 0) {
-                const latest = appData.advTests[appData.advTests.length - 1];
-                const best = Math.max(...appData.advTests.map(t => t.total));
-                const avgPct = Math.round((appData.advTests.reduce((a, b) => a + b.total, 0) / (appData.advTests.length * 360)) * 100);
-
-                document.getElementById('adv-latest-score').innerText = `${latest.total} / 360`;
-                document.getElementById('adv-best-score').innerText = best;
-                document.getElementById('adv-avg-pct').innerText = `${avgPct}%`;
-            }
-
-            appData.advTests.forEach(test => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="p-3 text-slate-400">${test.date}</td>
-                    <td class="p-3 font-semibold text-white">${test.name}</td>
-                    <td class="p-3 font-medium text-slate-300">${test.p1}</td>
-                    <td class="p-3 font-medium text-slate-300">${test.p2}</td>
-                    <td class="p-3 font-bold text-accent">${test.total}</td>
-                    <td class="p-3 text-right">
-                        <button onclick="deleteItem('advTests', ${test.id})" class="text-slate-500 hover:text-red-400"><i class="fa-regular fa-trash-can"></i></button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function renderCompareCharts() {
-            const ctxRadar = document.getElementById('compareRadarChart').getContext('2d');
-            if (compareRadar) compareRadar.destroy();
-
-            compareRadar = new Chart(ctxRadar, {
-                type: 'radar',
-                data: {
-                    labels: ['Physics', 'Chemistry', 'Mathematics'],
-                    datasets: [{
-                        label: 'Subject Strength',
-                        data: [75, 82, 60],
-                        backgroundColor: 'rgba(168, 85, 247, 0.2)',
-                        borderColor: '#a855f7',
-                        pointBackgroundColor: '#a855f7'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: { grid: { color: 'rgba(255,255,255,0.1)' }, angleLines: { color: 'rgba(255,255,255,0.1)' }, ticks: { display: false } }
-                    }
-                }
-            });
-
-            const ctxBar = document.getElementById('compareBarChart').getContext('2d');
-            if (compareBar) compareBar.destroy();
-            compareBar = new Chart(ctxBar, {
-                type: 'bar',
-                data: {
-                    labels: ['JEE Mains Accuracy', 'JEE Advanced Accuracy'],
-                    datasets: [{
-                        data: [68, 52],
-                        backgroundColor: ['#a855f7', '#3b82f6']
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-        }
-
-        function renderHoursChart() {
-            const ctx = document.getElementById('studyHoursChart').getContext('2d');
-            if (hoursChart) hoursChart.destroy();
-
-            hoursChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                    datasets: [{
-                        label: 'Hours Studied',
-                        data: [6, 7.5, 5, 8, 6.5, 9, 4],
-                        backgroundColor: '#a855f7',
-                        borderRadius: 6
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-        }
-
-        function renderHeatmap() {
-            const grid = document.getElementById('heatmap-grid');
-            grid.innerHTML = '';
-            for (let i = 0; i < 28; i++) {
-                const box = document.createElement('div');
-                const intensity = i % 4;
-                const colors = ['bg-slate-900', 'bg-purple-900/40', 'bg-purple-700/60', 'bg-accent'];
-                box.className = `w-full h-4 rounded-sm ${colors[intensity]} border border-slate-800/40`;
-                grid.appendChild(box);
-            }
-        }
-
-        function renderTasks(type) {
-            const container = document.getElementById(type === 'todo' ? 'todo-list' : 'backlog-list');
-            container.innerHTML = '';
-
-            const filteredTasks = appData.tasks.filter(t => t.type === type);
-            if(filteredTasks.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-500 py-4 text-center">No ${type} items logged yet.</p>`;
-                return;
-            }
-
-            filteredTasks.forEach(task => {
-                const div = document.createElement('div');
-                div.className = `p-3.5 rounded-xl bg-cardBg border border-slate-800 flex items-center justify-between transition ${task.done ? 'opacity-50' : ''}`;
-                div.innerHTML = `
-                    <div class="flex items-center space-x-3">
-                        <input type="checkbox" ${task.done ? 'checked' : ''} onchange="toggleTask(${task.id})" class="rounded border-slate-700 bg-slate-900 text-accent focus:ring-accent w-4 h-4">
-                        <span class="text-xs font-semibold px-2 py-0.5 rounded ${getSubjectBadge(task.subject)}">${task.subject}</span>
-                        <span class="text-xs text-slate-200 ${task.done ? 'line-through text-slate-500' : ''}">${task.desc}</span>
-                    </div>
-                    <button onclick="deleteItem('tasks', ${task.id})" class="text-slate-500 hover:text-red-400 text-xs"><i class="fa-regular fa-trash-can"></i></button>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function getSubjectBadge(subject) {
-            if(subject === 'Physics') return 'bg-physics/20 text-physics';
-            if(subject === 'Chemistry') return 'bg-chemistry/20 text-chemistry';
-            return 'bg-maths/20 text-maths';
-        }
-
-        function toggleTask(id) {
-            const task = appData.tasks.find(t => t.id === id);
-            if(task) task.done = !task.done;
-            saveState();
-        }
-
-        function renderSyllabusProgress() {
-            const container = document.getElementById('syllabus-container');
-            container.innerHTML = '';
-
-            let totalChapters = 0;
-            let completedCount = 0;
-
-            let subTotals = { Physics: { total: 0, done: 0 }, Chemistry: { total: 0, done: 0 }, Maths: { total: 0, done: 0 } };
-
-            Object.keys(appData.syllabus).forEach(unitName => {
-                const unit = appData.syllabus[unitName];
-                const unitCard = document.createElement('div');
-                unitCard.className = 'bg-cardBg rounded-2xl border border-slate-800 p-4 space-y-3';
-
-                let unitHTML = `
-                    <div class="flex justify-between items-center border-b border-slate-800/80 pb-2">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-xs font-bold px-2 py-0.5 rounded ${getSubjectBadge(unit.subject)}">${unit.subject}</span>
-                            <h4 class="text-sm font-semibold text-white">${unitName}</h4>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                `;
-
-                unit.chapters.forEach(chap => {
-                    totalChapters++;
-                    subTotals[unit.subject].total++;
-                    const isDone = appData.completedSyllabus.includes(chap);
-                    if (isDone) {
-                        completedCount++;
-                        subTotals[unit.subject].done++;
-                    }
-
-                    unitHTML += `
-                        <label class="flex items-center space-x-2 text-xs text-slate-300 p-2 rounded-lg bg-slate-900/40 hover:bg-slate-900 cursor-pointer">
-                            <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleSyllabusChapter('${chap}')" class="rounded border-slate-700 bg-slate-900 text-accent focus:ring-accent">
-                            <span class="${isDone ? 'line-through text-slate-500' : ''}">${chap}</span>
-                        </label>
-                    `;
-                });
-
-                unitHTML += `</div>`;
-                unitCard.innerHTML = unitHTML;
-                container.appendChild(unitCard);
-            });
-
-            // Update Progress Percentage Bars
-            const totalPct = totalChapters ? Math.round((completedCount / totalChapters) * 100) : 0;
-            document.getElementById('syllabus-total-pct').innerText = `${totalPct}%`;
-            document.getElementById('syllabus-total-bar').style.width = `${totalPct}%`;
-
-            const phyPct = subTotals.Physics.total ? Math.round((subTotals.Physics.done / subTotals.Physics.total) * 100) : 0;
-            const chemPct = subTotals.Chemistry.total ? Math.round((subTotals.Chemistry.done / subTotals.Chemistry.total) * 100) : 0;
-            const mathPct = subTotals.Maths.total ? Math.round((subTotals.Maths.done / subTotals.Maths.total) * 100) : 0;
-
-            document.getElementById('dash-phy-pct').innerText = `${phyPct}%`;
-            document.getElementById('dash-phy-bar').style.width = `${phyPct}%`;
-
-            document.getElementById('dash-chem-pct').innerText = `${chemPct}%`;
-            document.getElementById('dash-chem-bar').style.width = `${chemPct}%`;
-
-            document.getElementById('dash-math-pct').innerText = `${mathPct}%`;
-            document.getElementById('dash-math-bar').style.width = `${mathPct}%`;
-        }
-
-        function toggleSyllabusChapter(chapName) {
-            const index = appData.completedSyllabus.indexOf(chapName);
-            if (index > -1) {
-                appData.completedSyllabus.splice(index, 1);
-            } else {
-                appData.completedSyllabus.push(chapName);
-            }
-            saveState();
-        }
-
-        function renderPracticeTable() {
-            const tbody = document.getElementById('practice-log-rows');
-            tbody.innerHTML = '';
-
-            appData.practiceLogs.forEach(log => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="p-3 text-slate-400">${log.date}</td>
-                    <td class="p-3"><span class="px-2 py-0.5 rounded text-xs ${getSubjectBadge(log.subject)}">${log.subject}</span></td>
-                    <td class="p-3 font-semibold text-white">${log.chapter}</td>
-                    <td class="p-3 font-bold text-emerald-400">${log.count} Qs</td>
-                    <td class="p-3 text-right">
-                        <button onclick="deleteItem('practiceLogs', ${log.id})" class="text-slate-500 hover:text-red-400"><i class="fa-regular fa-trash-can"></i></button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function openAddTestModal(type) {
-            document.getElementById('test-type').value = type;
-            document.getElementById('modal-test-title').innerText = type === 'mains' ? 'Add JEE Mains Mock Score' : 'Add JEE Advanced Mock Score';
-            document.getElementById('modal-test').classList.remove('hidden');
-        }
-
-        function openLogHoursModal() {
-            document.getElementById('modal-hours').classList.remove('hidden');
-        }
-
-        function openAddTaskModal(type) {
-            document.getElementById('task-type-input').value = type;
-            document.getElementById('modal-task-title').innerText = type === 'todo' ? 'Add Daily To-Do Task' : 'Add Subject Backlog Topic';
-            document.getElementById('modal-task').classList.remove('hidden');
-        }
-
-        function openLogPracticeModal() {
-            document.getElementById('modal-practice').classList.remove('hidden');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.add('hidden');
-        }
-
-        function handleSaveTest(e) {
-            e.preventDefault();
-            const type = document.getElementById('test-type').value;
-            const name = document.getElementById('test-name').value;
-            const phy = parseInt(document.getElementById('test-phy').value);
-            const chem = parseInt(document.getElementById('test-chem').value);
-            const math = parseInt(document.getElementById('test-math').value);
-
-            if(type === 'mains') {
-                appData.mainsTests.push({
-                    id: Date.now(),
-                    date: new Date().toISOString().split('T')[0],
-                    name, phy, chem, math, total: phy + chem + math
-                });
-            } else {
-                appData.advTests.push({
-                    id: Date.now(),
-                    date: new Date().toISOString().split('T')[0],
-                    name, p1: phy + chem, p2: math, total: phy + chem + math
-                });
-            }
-
-            closeModal('modal-test');
-            saveState();
-        }
-
-        function handleSaveHours(e) {
-            e.preventDefault();
-            const category = document.getElementById('hours-category').value;
-            const hours = parseFloat(document.getElementById('hours-val').value);
-
-            appData.studyLogs.push({
-                id: Date.now(),
-                date: new Date().toISOString().split('T')[0],
-                category, hours
-            });
-
-            closeModal('modal-hours');
-            saveState();
-        }
-
-        function handleSaveTask(e) {
-            e.preventDefault();
-            const type = document.getElementById('task-type-input').value;
-            const subject = document.getElementById('task-subject').value;
-            const desc = document.getElementById('task-desc').value;
-
-            appData.tasks.push({
-                id: Date.now(),
-                type, subject, desc, done: false
-            });
-
-            closeModal('modal-task');
-            saveState();
-        }
-
-        function handleSavePractice(e) {
-            e.preventDefault();
-            const subject = document.getElementById('practice-subject').value;
-            const chapter = document.getElementById('practice-chapter').value;
-            const count = parseInt(document.getElementById('practice-count').value);
-
-            appData.practiceLogs.push({
-                id: Date.now(),
-                date: new Date().toISOString().split('T')[0],
-                subject, chapter, count
-            });
-
-            closeModal('modal-practice');
-            saveState();
-        }
-
-        function deleteItem(collection, id) {
-            appData[collection] = appData[collection].filter(item => item.id !== id);
-            saveState();
-        }
-
-        // Initialize on load
-        window.onload = function() {
-            setupHeaderDate();
-            refreshUI();
-        };
-    </script>
+      `).join('');
+
+      // Render Practice Log Table
+      const practiceBody = document.getElementById('practice-table-body');
+      if (appData.practiceLogs.length === 0) {
+        practiceBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-xs text-gray-500">No question logs added yet.</td></tr>`;
+      } else {
+        practiceBody.innerHTML = appData.practiceLogs.map((p, idx) => `
+          <tr class="hover:bg-white/5">
+            <td class="p-4 text-gray-400">${p.date}</td>
+            <td class="p-4 font-medium text-purple-400">${p.subject}</td>
+            <td class="p-4 text-white font-bold">${p.count} Questions</td>
+            <td class="p-4 text-gray-300">${p.source || '-'}</td>
+            <td class="p-4 text-right"><button onclick="deletePractice(${idx})" class="text-red-400 hover:text-red-300 text-xs"><i data-lucide="trash" class="w-4 h-4"></i></button></td>
+          </tr>
+        `).join('');
+      }
+
+      refreshCharts();
+      lucide.createIcons();
+    }
+
+    // Add Mains Test
+    function addMainsTest(e) {
+      e.preventDefault();
+      const p = Number(document.getElementById('mains-p').value);
+      const c = Number(document.getElementById('mains-c').value);
+      const m = Number(document.getElementById('mains-m').value);
+      appData.mainsTests.push({
+        date: new Date().toLocaleDateString(),
+        name: document.getElementById('mains-name').value,
+        p, c, m,
+        total: p + c + m
+      });
+      e.target.reset();
+      saveData();
+    }
+    function deleteMains(i) { appData.mainsTests.splice(i, 1); saveData(); }
+
+    // Add Adv Test
+    function addAdvTest(e) {
+      e.preventDefault();
+      appData.advTests.push({
+        date: new Date().toLocaleDateString(),
+        name: document.getElementById('adv-name').value,
+        score: Number(document.getElementById('adv-score').value),
+        max: Number(document.getElementById('adv-max').value)
+      });
+      e.target.reset();
+      saveData();
+    }
+    function deleteAdv(i) { appData.advTests.splice(i, 1); saveData(); }
+
+    // Add Study Hours
+    function addStudyLog(e) {
+      e.preventDefault();
+      appData.studyLogs.push({
+        date: document.getElementById('hour-date').value,
+        subject: document.getElementById('hour-subject').value,
+        hours: document.getElementById('hour-value').value,
+        topic: document.getElementById('hour-topic').value
+      });
+      e.target.reset();
+      saveData();
+    }
+    function deleteHour(i) { appData.studyLogs.splice(i, 1); saveData(); }
+
+    // Todos
+    function addTodo(e) {
+      e.preventDefault();
+      const input = document.getElementById('todo-input');
+      appData.todos.push({ text: input.value, done: false });
+      input.value = '';
+      saveData();
+    }
+    function toggleTodo(i) { appData.todos[i].done = !appData.todos[i].done; saveData(); }
+    function deleteTodo(i) { appData.todos.splice(i, 1); saveData(); }
+
+    // Backlog
+    function addBacklog(e) {
+      e.preventDefault();
+      appData.backlogs.push({
+        subject: document.getElementById('backlog-subject').value,
+        topic: document.getElementById('backlog-topic').value
+      });
+      e.target.reset();
+      saveData();
+    }
+    function deleteBacklog(i) { appData.backlogs.splice(i, 1); saveData(); }
+
+    // Syllabus Toggle
+    function toggleSyllabus(key) {
+      appData.syllabusProgress[key] = !appData.syllabusProgress[key];
+      saveData();
+    }
+
+    // Practice Log
+    function addPracticeLog(e) {
+      e.preventDefault();
+      appData.practiceLogs.push({
+        date: new Date().toLocaleDateString(),
+        subject: document.getElementById('practice-subject').value,
+        count: Number(document.getElementById('practice-count').value),
+        source: document.getElementById('practice-source').value
+      });
+      e.target.reset();
+      saveData();
+    }
+    function deletePractice(i) { appData.practiceLogs.splice(i, 1); saveData(); }
+
+    // Initialize on page load
+    window.onload = function() {
+      initCharts();
+      updateAllViews();
+      lucide.createIcons();
+    };
+  </script>
 </body>
 </html>
